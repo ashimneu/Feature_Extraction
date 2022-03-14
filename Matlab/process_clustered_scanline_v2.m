@@ -30,7 +30,7 @@ p.s = rng; % random number generator
 % declare variables to store pointclouds.
 pc_c = []; pc_l = []; pc_all = [];
 
-for scanid = 1:900 % 101 %1:30:length(list) 
+for scanid = 1:100 %1:30:length(list) 
     % clearfig(2999); % figure of accumulated scanlines of previous scan is cleared
 
     fprintf('\n scanid: %3.0f \n',scanid); % print current Lidar scan number
