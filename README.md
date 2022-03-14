@@ -1,2 +1,2 @@
 # Feature_Extraction
-This repository contains reference papers and Matlab files intended for feature extraction algorithms.
+This repository contains reference papers, Matlab and Cpp scripts that perform corner points extraction from point cloud of single laser (range & angle measurements). Corner points for multiple lasers are accumulated to form a distinguished point cloud of corner and non-corner points for each revolution of lidar. It is assumed that data are collected using M8 lidar (it consists of 8 lasers).
