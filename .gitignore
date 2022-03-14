@@ -1,0 +1,11 @@
+
+*.pcd
+Matlab/data/*
+*.asv
+tex/corner_and_line_detection.synctex.gz
+tex/corner_and_line_detection.pdf
+tex/corner_and_line_detection.log
+tex/corner_and_line_detection.blg
+tex/corner_and_line_detection.bbl
+tex/corner_and_line_detection.aux
+Matlab/utilities/pc_xyz.mat

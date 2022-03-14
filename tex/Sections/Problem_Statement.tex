@@ -1,0 +1,11 @@
+A measurement of single point using lidar is given by the range $\rho$ and the angluar displacement $\theta$ about its axis of rotation, which can be represented as $\tilde{\Boldx} = [\rho, \theta]^\top$, in a polar coordinates.
+In a euclidean space, the point measurement using Lidar is represented as $\Boldx \in \mathbb{R}^{3 \times 1}$. 
+During each scan, a Lidar laser yields a scanline which consists of $N$ such points measurements. 
+A scanline is defined as a matrix 
+\begin{align}
+	\BoldS = \begin{bmatrix}
+		\Boldx_1^\top \\ \vdots \\ \Boldx_N^\top
+	\end{bmatrix}
+\end{align}
+where $i^{\text{th}}$ row consists of $i^{\text{th}}$ measurement point $\Boldx_i$ in the scanline.
+

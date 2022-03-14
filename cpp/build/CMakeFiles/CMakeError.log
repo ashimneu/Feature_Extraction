@@ -1,0 +1,38 @@
+Performing C++ SOURCE FILE Test CMAKE_HAVE_LIBC_PTHREAD failed with the following output:
+Change Dir: /home/user/Desktop/test/build/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/make cmTC_03947/fast && /usr/bin/make -f CMakeFiles/cmTC_03947.dir/build.make CMakeFiles/cmTC_03947.dir/build
+make[1]: Entering directory '/home/user/Desktop/test/build/CMakeFiles/CMakeTmp'
+Building CXX object CMakeFiles/cmTC_03947.dir/src.cxx.o
+/usr/bin/c++    -DCMAKE_HAVE_LIBC_PTHREAD   -o CMakeFiles/cmTC_03947.dir/src.cxx.o -c /home/user/Desktop/test/build/CMakeFiles/CMakeTmp/src.cxx
+Linking CXX executable cmTC_03947
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_03947.dir/link.txt --verbose=1
+/usr/bin/c++    -DCMAKE_HAVE_LIBC_PTHREAD     CMakeFiles/cmTC_03947.dir/src.cxx.o  -o cmTC_03947  /usr/lib/x86_64-linux-gnu/libpcap.so 
+/usr/bin/ld: CMakeFiles/cmTC_03947.dir/src.cxx.o: undefined reference to symbol 'pthread_join@@GLIBC_2.2.5'
+/usr/bin/ld: /lib/x86_64-linux-gnu/libpthread.so.0: error adding symbols: DSO missing from command line
+collect2: error: ld returned 1 exit status
+make[1]: *** [CMakeFiles/cmTC_03947.dir/build.make:88: cmTC_03947] Error 1
+make[1]: Leaving directory '/home/user/Desktop/test/build/CMakeFiles/CMakeTmp'
+make: *** [Makefile:121: cmTC_03947/fast] Error 2
+
+
+Source file was:
+#include <pthread.h>
+
+void* test_func(void* data)
+{
+  return data;
+}
+
+int main(void)
+{
+  pthread_t thread;
+  pthread_create(&thread, NULL, test_func, NULL);
+  pthread_detach(thread);
+  pthread_join(thread, NULL);
+  pthread_atfork(NULL, NULL, NULL);
+  pthread_exit(NULL);
+
+  return 0;
+}
+

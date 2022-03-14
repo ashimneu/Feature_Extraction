@@ -1,0 +1,87 @@
+Set of points are extracted using Linearity feature.
+
+\begin{enumerate}
+	\item For $i^{\text{th}}$ point in a scanline $\Boldx_i$ where $i \in \{1,\dots,N\}$, its neighborhood $\EuScript{N}_{r}(i)$ is defined as the set of points lying inside a sphere of radius $r$, whose center is located at $\Boldx_i$.
+	\item Covariance for the $i^{\text{th}}$ neigbhorhood is computed as
+	\begin{align}
+		\BoldR_i = \frac{1}{|\EuScript{N}_{r}(i)|} \sum_{j \in \EuScript{N}_{r}(i)} (\Boldx_j - \bar{\Boldx}_i)(\Boldx_j - \bar{\Boldx}_i)^\top,  
+	\end{align}
+	where $\Boldx_c = \frac{1}{|\EuScript{N}_{r}(i)| } \sum_{j \in \EuScript{N}_{r}(i)} \Boldx_j.$
+	\item Performing eigen decomposition on the covariance matrix $\BoldR_i$ yields $\BoldR_i = \BoldV \BoldLambda \BoldV^\top$, where $\BoldLambda$ is a diagonal matrix whose entries are the eigen values, $\lambda_1 \ge \lambda_2 \ge \lambda_3 $, and $\BoldV $ is the orthogonal matrix whose $i^\text{th}$ column is an eigen vector $\Bolde_i$ which corresponds to the $i^\text{th}$ eigen value $\lambda_i$. 
+	\item For scan point $\Boldx_i$, $i \in \{1,\dots,N\}$, linearity $L_i$ and sum of eigen values $E_i$ is computed using the definitions in Table \ref{table:geometric_features}.
+	\item $B = \{i \, | \, L_i < \tau_L^c \}$ is the set of indices of the points for which linearity is less than the threshold $\tau_L^\ell = 0.7$. $\tau_L^c$ is the linearity threshold for detection of corner.
+		\begin{enumerate}
+			\item \label{step:DBSCAN} Density-based spatial clustering of applications with noise (DBSCAN) is a method of clustering which groups together points based on their proximity with each other \cite{ester1996density}. 
+			Starting with a randomly selected inital point, a cluster is formed by searching for all of its neigbhoring points that fall inside a sphere centered at the inital point and of radius $r$. 
+			After all points lying inside the sphere are included in the cluster, a new cluster is initiated by selecting a point that falls outside the sphere and repeating the aforementioned search step. 
+			DBSCAN is computed on the points $\Boldx_i$, $i \in B$, to generate $m$ clusters of points that are denoted as $\{C_i\}_{i=1}^m$.
+			\item To identify whether a given cluster consists of a corner, a plot of the eigen value sum (E) (defined in Table \ref{table:geometric_features}) for each cluster is generated.
+			\item \label{step:fitting} It is found that the eigen value sum plot for a cluster containing a corner roughly resembles a line with one turning point whereas for a cluster contaning no corner but a straight line, the eigen sum plot resembes a straigh line. 
+			A linear model for line fitting model is
+			\begin{equation} \label{eqn:linear_model}
+				E_j = a_1 i + a_2,
+			\end{equation} 
+			where $a_1,a_2 \in \mathbb{R}$ are the fitting coefficients. 
+			The cost function associated to the linear fitting is defined as
+			\begin{equation} \label{eqn:cost_linear_model}
+				Q^\ell = \sum_{j \in C_i}{} r_j^2, \qquad i \in \{1, ..., m\},
+			\end{equation}
+			where residual $r_j = \hat{E_j} - E_j$, and $\hat{E_j}$ is the estimated Eigen value sum of the $i^\text{th}$ point.
+			The quadratic line fitting model is
+			\begin{align} \label{eqn:quadratic_model}
+				E_j = b_1 i^2 + b_2 i + b_3,
+			\end{align}
+			where $b_1,b_2,b_3 \in \mathbb{R}$ are the fitting coefficients. 
+			The cost for the quadratic fitting defined as
+			\begin{align}
+				Q^q = \sum_{j \in C_i}{} r_j^2, \qquad i \in \{1, ..., m\},
+			\end{align}
+			where residual $r_j = \hat{E_j} - E_j$, and $\hat{E_j}$ is the estimated Eigen value sum of the $i^\text{th}$ point.			
+		\end{enumerate}
+	
+	
+	\item $\bar{B} = \{i \, | \, L_i >= \tau_L^\ell \}$ is the set of indices of the points for which linearity value is greater than the threshold $\tau_L^\ell = 0.9$. It is the linearity threshold for detection of a straight line.
+	
+	\begin{enumerate}
+		\item Similar to step \ref{step:DBSCAN}, DBSCAN is performed to separate the scanline point cloud into clusters using the radius $r$ parameter.
+		\item Again, similar to step \ref{step:fitting} a straight line, as defined in eqn. (\ref{eqn:linear_model}), is fitted to the clusters and the associated cost, as defined in \ref{eqn:cost_linear_model}, is computed. The cost is compared with a threshold to determine if the cluster points belong to a straight line.
+		\item Proposed exponential model is 
+		\begin{equation}
+			\gamma = 1 - exp(-(c_1 \alpha + c_2)^2),
+		\end{equation}
+	where $c_1,c_2$ are the fitting coefficients and $\alpha$ is the sliding window size.
+	\end{enumerate}
+	
+	
+\end{enumerate}
+
+
+%\begin{algorithm}[t]  
+%	\setlength{\belowdisplayskip}{-5pt} 
+%	\setlength{\belowdisplayshortskip}{-5pt}
+%	\setlength{\abovedisplayskip}{0pt} 
+%	\setlength{\abovedisplayshortskip}{-1pt}
+%	\caption{Corner Detection} 
+%	\label{alg:MER}                   
+%	\begin{algorithmic}[1] 
+%		\Require $\BoldS$,$\Tau^c_L$.
+%		\Ensure $\hat{\Boldx}$.
+%		\State Initialize $l=0$;
+%		\State Compute  estimate $\hat{\Boldx}^\ell$ from eqn. (\ref{eqn:KF_info}); 
+%		\While{($||\hat{\Boldx}^{\ell} - \hat{\Boldx}^{\ell+1}|| > \tau_{\Boldx}$) \& ($\ell < \ell_{M}$) }		
+%		\State Compute {\em a posteriori} residuals $r_i = c_i - \hat{c}_i, ~ 1 \le i \le p$,
+%		\Statex \quad\quad where $\hat{c}_i = \Bolda_i ~ \hat{\Boldx}^\ell ;$  \label{step:MER_res}
+%		\State Compute estimate of scale $\hat{s} = MAD/0.6745$, 
+%		\Statex \quad\quad where $MAD = median(|\Boldr - median(\Boldr)|)$ \label{step:MER_MAD}
+%		\State Compute scaled residual $\alpha_i = r_i/ \hat{s} $;
+%		\State Calculate weights $w_i(\alpha_i) = \psi(\alpha_i)/ \alpha_i$ \label{step:MER_weights} and weight matrix 
+%		\Statex \quad\quad $\BoldW = diag(w_1,..,w_m);$ 
+%		\State Compute the Weighted Least Squares solution: \label{step:MER_WLS}
+%		\begin{equation*}
+%			\hat{\Boldx}^{\ell+1} = (\BoldA^{\top} \BoldW \, \BoldA)^{-1}(\BoldA^{\top} \BoldW \, \Boldc);
+%		\end{equation*}
+%		\State $\ell = \ell + 1$ ;
+%		\EndWhile 
+%		
+%	\end{algorithmic}
+%\end{algorithm}

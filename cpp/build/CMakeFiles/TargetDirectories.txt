@@ -1,0 +1,4 @@
+/home/user/Desktop/test/build/CMakeFiles/rebuild_cache.dir
+/home/user/Desktop/test/build/CMakeFiles/feature_detect.dir
+/home/user/Desktop/test/build/CMakeFiles/edit_cache.dir
+/home/user/Desktop/test/build/CMakeFiles/feature_detect_autogen.dir
